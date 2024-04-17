@@ -1,2 +1,9 @@
 build
 build*
+*.exe
+*.dll
+*.so
+*.dylib
+*.o
+*.txt
+*.json
