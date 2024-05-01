@@ -16,10 +16,9 @@ std::vector<Citation*> loadCitations(const std::string& filename) {
         std::exit(1);
     }
     nlohmann::json data = nlohmann::json::parse(file);
-    try{
-        auto cites = data["citations"];
-    } catch(nlohmann::json::exception& e){
-        std::cerr << "Invalid collection, " << e.what() << " not found." << std::endl;
+    try{auto cites = data["citations"];} 
+    catch(nlohmann::json::exception& e){
+        std::cerr << "Invalid citation collection, " << e.what() << std::endl;
         std::exit(1);
     }
     auto cites = data["citations"];
@@ -32,15 +31,9 @@ std::vector<Citation*> loadCitations(const std::string& filename) {
                 std::cerr << "Invalid id." << std::endl;
                 std::exit(1);
             }
-            std::string id = citation["id"].get<std::string>();
-            // check if id is a unique number from 1 to n
-            if(id != std::to_string(i+1)){
-                std::cerr << "Invalid id." << std::endl;
-                std::exit(1);
-            }
         }
         catch(nlohmann::json::exception& e){
-            std::cerr << "Invalid citation, " << e.what() << " not found." << std::endl;
+            std::cerr << "Invalid citation, " << e.what() << std::endl;
             std::exit(1);
         }
         try{
@@ -49,9 +42,13 @@ std::vector<Citation*> loadCitations(const std::string& filename) {
                 std::exit(1);
             }
             std::string type = citation["type"].get<std::string>();
+            if(type != "book" && type != "webpage" && type != "article"){
+                std::cerr << "Invalid citation type." << std::endl;
+                std::exit(1);
+            }
         }
         catch(nlohmann::json::exception& e){
-            std::cerr << "Invalid citation, " << e.what() << " not found." << std::endl;
+            std::cerr << "Invalid citation, " << e.what() << std::endl;
             std::exit(1);
         }
         // end basic exception handling
@@ -108,7 +105,7 @@ std::vector<Citation*> loadCitations(const std::string& filename) {
                 citations.push_back(new ArticleCitation(id, info));
             }
             catch(nlohmann::json::exception& e){
-                std::cerr << "Invalid article citation, " << e.what() << " not found." << std::endl;
+                std::cerr << "Invalid article citation, " << e.what() << std::endl;
                 std::exit(1);
             }
         }
@@ -155,7 +152,7 @@ void parseInput(const std::string& input, const std::vector<Citation*>& citation
         auto id = input.substr(ptr+1, end-ptr-1);
         bool found = false;
         for(auto c : citations){
-            if(c->id == id){
+            if(c->getId() == id){
                 found = true;
                 auto it = std::find(printedCitations.begin(), printedCitations.end(), c);
                 if(it == printedCitations.end()) printedCitations.push_back(c); // avoid repeated references
@@ -163,7 +160,7 @@ void parseInput(const std::string& input, const std::vector<Citation*>& citation
             }
         }
         if(!found){
-            std::cerr << "Invalid input." << std::endl;
+            std::cerr << "Invalid input. " << id << " not found in citation collection. " << std::endl;
             std::exit(1);
         }
         ptr = input.find("[", end);
@@ -173,12 +170,10 @@ void parseInput(const std::string& input, const std::vector<Citation*>& citation
 
 
 int main(int argc, char** argv) {
-    // command line parsing
-    if (argc > 6){
+    if (argc!=6 && argc!=4){
         std::cerr << "Invalid command." << std::endl;
         std::exit(1);
     }
-
     std::string citation_path;
     std::string output_path;
     std::string input_file;
@@ -238,11 +233,11 @@ int main(int argc, char** argv) {
         input = readFromFile(input_file);
     }
 
-    // main job
+    // main logic
     auto citations = loadCitations(citation_path);
     parseInput(input, citations);
     sort(printedCitations.begin(), printedCitations.end(), [](Citation* a, Citation* b){
-        return std::stoi(a->id) < std::stoi(b->id);
+        return std::stoi(a->getId()) < std::stoi(b->getId());
     });
 
     // output
