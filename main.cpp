@@ -97,7 +97,7 @@ std::vector<Citation*> loadCitations(const std::string& filename) {
                 int year = citation["year"].get<int>();
                 int volume = citation["volume"].get<int>();
                 int issue = citation["issue"].get<int>();
-                std::string info = title + ", " + author + ", " + journal + ", " + std::to_string(year) + ", " + std::to_string(volume) + ", " + std::to_string(issue);
+                std::string info = author + ", " + title + ", " + journal + ", " + std::to_string(year) + ", " + std::to_string(volume) + ", " + std::to_string(issue);
                 citations.push_back(new ArticleCitation(id, info));
             }
             catch(nlohmann::json::exception& e){
