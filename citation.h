@@ -35,7 +35,7 @@ class WebCitation : public Citation {
 public:
     WebCitation(const std::string& id, const std::string& url) : Citation(id, "title", url) {}
     virtual std::string cite() override {
-        return "[" + getId() + "]" + " webpage: " + getInfo() + ". " + "Available at " + "http://" + getCode() + "\n";
+        return "[" + getId() + "]" + " webpage: " + getInfo() + ". " + "Available at " + getCode() + "\n";
     }
 };
 

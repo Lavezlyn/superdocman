@@ -78,11 +78,7 @@ std::vector<Citation*> loadCitations(const std::string& filename) {
                     std::exit(1);
                 }
                 std::string url = citation["url"].get<std::string>();
-                auto pos = url.find("http://");
-                std::string URL;
-                if(pos == std::string::npos) URL = url;
-                else URL = url.substr(pos+7);
-                citations.push_back(new WebCitation(id, URL));
+                citations.push_back(new WebCitation(id, url));
             }
             catch(nlohmann::json::exception& e){
                 std::cerr << "Invalid webpage citation, " << e.what() << " not found." << std::endl;
@@ -245,7 +241,7 @@ int main(int argc, char** argv) {
         // output to stdout
         std::ostream& output = std::cout;
         output << input;  
-        output << "\nReferences: \n";
+        output << "\nReferences:\n";
         for (auto c : printedCitations) {
             std::cout << c->cite();
         }
