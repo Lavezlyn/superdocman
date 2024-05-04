@@ -255,7 +255,7 @@ int main(int argc, char** argv) {
         try{
         std::ofstream outfile{output_path};
         outfile << input;
-        outfile << "\nReferences: \n";
+        outfile << "\nReferences:\n";
         for (auto c : printedCitations) {
             outfile << c->cite();
         }
