@@ -16,7 +16,10 @@ std::vector<Citation*> loadCitations(const std::string& filename) {
         std::exit(1);
     }
     nlohmann::json data = nlohmann::json::parse(file);
-    try{auto cites = data["citations"];} 
+    try{
+        if(data["version"].is_number()==false){std::exit(1);}
+        auto cites = data["citations"];
+    } 
     catch(nlohmann::json::exception& e){
         std::cerr << "Invalid citation collection, " << e.what() << std::endl;
         std::exit(1);
