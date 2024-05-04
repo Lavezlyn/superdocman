@@ -233,7 +233,7 @@ int main(int argc, char** argv) {
     auto citations = loadCitations(citation_path);
     parseInput(input, citations);
     sort(printedCitations.begin(), printedCitations.end(), [](Citation* a, Citation* b){
-        return std::stoi(a->getId()) < std::stoi(b->getId());
+        return a->getId() < b->getId();
     });
 
     // output
